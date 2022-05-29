@@ -16,7 +16,7 @@ if ($trigger == "button") {
 	$notification.post("配置重载","配置重载成功","")
 };
 $done({
-    title:"𝗦𝗨𝗥𝗚𝗘 𝗣𝗥𝗢 ®"+startTime,
+    title:"𝗦𝘂𝗿𝗴𝗲 𝗣𝗿𝗼 🧚🏽‍♀️:"+startTime,
     content:"𝗠𝗶𝘁𝗺:"+icon_status(mitm_status.enabled)+"  𝗥𝗲𝘄𝗿𝗶𝘁𝗲:"+icon_status(rewrite_status.enabled)+"  𝗦𝗰𝗿𝗶𝗽𝘁𝗶𝗻𝗴:"+icon_status(scripting_status.enabled),
     icon: icon_s?"hourglass.badge.plus":"hourglass.badge.plus",
    "icon-color":icon_s?"#16A951":"#FA7500"
