@@ -190,7 +190,7 @@ panel_result['content'] = content
   
     return netflix_check_result
   }
-async function testDisneyPlus() {
+    async function testDisneyPlus() {
     try {
         let { region, cnbl } = await Promise.race([testHomePage(), timeout(7000)])
         console.log(`homepage: region=${region}, cnbl=${cnbl}`)
