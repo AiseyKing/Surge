@@ -1,3 +1,11 @@
+/*
+ * 由@LucaLin233编写
+ * 原脚本地址：https://raw.githubusercontent.com/LucaLin233/Luca_Conf/main/Surge/JS/stream-all.js
+ * 由@Rabbit-Spec修改
+ * 更新日期：2022.07.22
+ * 版本：2.3
+ */
+
 const REQUEST_HEADERS = {
     'User-Agent':
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36',
@@ -14,21 +22,6 @@ const STATUS_NOT_AVAILABLE = 0
 const STATUS_TIMEOUT = -1
 // 检测异常
 const STATUS_ERROR = -2
-
-function getFlagEmoji(code) {
-  const codePoints = code
-     .toUpperCase()
-    .split('')
-    .map((char) => 127397 + char.charCodeAt());
-  return String.fromCodePoint(...codePoints);
-}
-function getFlagEmoji(region) {
-  const codePoints = region
-     .toUpperCase()
-    .split('')
-    .map((char) => 127397 + char.charCodeAt());
-  return String.fromCodePoint(...codePoints);
-}
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36'
 
@@ -51,11 +44,11 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
       } else if (status==STATUS_AVAILABLE){
         //console.log(2)
         console.log(region)
-        disney_result="𝗗𝗶𝘀𝗻𝗲𝘆✛ : 已经解锁 ➠ " +`${getFlagEmoji(region)} ` + region.toUpperCase()
+        disney_result="𝗗𝗶𝘀𝗻𝗲𝘆✛ : 已解锁 ➟ "+region.toUpperCase()
         // console.log(result["Disney"])
       } else if (status==STATUS_NOT_AVAILABLE) {
         //console.log(3)
-        disney_result="𝗗𝗶𝘀𝗻𝗲𝘆✛ : 没有支持 🚫 "
+        disney_result="𝗗𝗶𝘀𝗻𝗲𝘆✛ : 未支持 🚫 "
       } else if (status==STATUS_TIMEOUT) {
         disney_result="𝗗𝗶𝘀𝗻𝗲𝘆✛ : 检测超时 🚦"
       }
@@ -108,13 +101,13 @@ panel_result['content'] = content
     await inner_check()
       .then((code) => {
         if (code === 'Not Available') {
-          youtube_check_result += '不能解锁🚫'
+          youtube_check_result += '不支持解锁'
         } else {
-          youtube_check_result += '已经解锁 ➠ ' +`${getFlagEmoji(code)} `+ code.toUpperCase()
+          youtube_check_result += '已解锁 ➟ ' + code.toUpperCase()
         }
       })
       .catch((error) => {
-        youtube_check_result += '检测失败，请刷新面板🔄'
+        youtube_check_result += '检测失败，请刷新面板'
       })
   
     return youtube_check_result
@@ -166,7 +159,7 @@ panel_result['content'] = content
         if (code === 'Not Found') {
           return inner_check(80018499)
         }
-        netflix_check_result += '完整解锁 ➠ '  +`${getFlagEmoji(code)} ` + code.toUpperCase()
+        netflix_check_result += '已完整解锁 ➟ ' + code.toUpperCase()
         return Promise.reject('BreakSignal')
       })
       .then((code) => {
@@ -174,7 +167,7 @@ panel_result['content'] = content
           return Promise.reject('Not Available')
         }
   
-        netflix_check_result += '仅自制剧 ➠ ' + `${getFlagEmoji(code)} ` + code.toUpperCase()
+        netflix_check_result += '仅解锁自制剧 ➟ ' + code.toUpperCase()
         return Promise.reject('BreakSignal')
       })
       .catch((error) => {
@@ -182,15 +175,16 @@ panel_result['content'] = content
           return
         }
         if (error === 'Not Available') {
-          netflix_check_result += '不能解锁🚫'
+          netflix_check_result += '该节点不支持解锁'
           return
         }
-        netflix_check_result += '检测失败，请刷新面板🔄'
+        netflix_check_result += '检测失败，请刷新面板'
       })
   
     return netflix_check_result
   }
-    async function testDisneyPlus() {
+
+  async function testDisneyPlus() {
     try {
         let { region, cnbl } = await Promise.race([testHomePage(), timeout(7000)])
         console.log(`homepage: region=${region}, cnbl=${cnbl}`)
@@ -200,6 +194,15 @@ panel_result['content'] = content
     //  }
         let { countryCode, inSupportedLocation } = await Promise.race([getLocationInfo(), timeout(7000)])
         console.log(`getLocationInfo: countryCode=${countryCode}, inSupportedLocation=${inSupportedLocation}`)
+        
+        region = countryCode ?? region
+        console.log( "region:"+region)
+        // 即将登陆
+        if (inSupportedLocation === false || inSupportedLocation === 'false') {
+          return { region, status: STATUS_COMING }
+        } else {
+          // 支持解锁
+          return { region, status: STATUS_AVAILABLE }
         }
         
       } catch (error) {
@@ -299,7 +302,7 @@ panel_result['content'] = content
               reject('Error')
               return
             }
-            if (response.status !== 200 || data.indexOf('unavailable') !== -1) {
+            if (response.status !== 200 || data.indexOf('Sorry, Disney+ is not available in your region.') !== -1) {
               reject('Not Available')
               return
             }
@@ -323,4 +326,4 @@ panel_result['content'] = content
             reject('Timeout')
           }, delay)
         })
-      }
+      }  
