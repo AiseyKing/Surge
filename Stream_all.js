@@ -190,8 +190,7 @@ panel_result['content'] = content
   
     return netflix_check_result
   }
-
-  async function testDisneyPlus() {
+async function testDisneyPlus() {
     try {
         let { region, cnbl } = await Promise.race([testHomePage(), timeout(7000)])
         console.log(`homepage: region=${region}, cnbl=${cnbl}`)
@@ -201,15 +200,6 @@ panel_result['content'] = content
     //  }
         let { countryCode, inSupportedLocation } = await Promise.race([getLocationInfo(), timeout(7000)])
         console.log(`getLocationInfo: countryCode=${countryCode}, inSupportedLocation=${inSupportedLocation}`)
-        
-        region = countryCode ?? region
-        console.log( "region:"+region)
-        // 即将登陆
-        if (inSupportedLocation === false || inSupportedLocation === 'false') {
-          return { region, status: STATUS_COMING }
-        } else {
-          // 支持解锁
-          return { region, status: STATUS_AVAILABLE }
         }
         
       } catch (error) {
